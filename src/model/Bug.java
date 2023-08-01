@@ -1,15 +1,23 @@
 package model;
 
-public class Bug {
+public class Bug implements ConsoleNotification, Comparable<Bug> {
     private String description;
-    private String email;
+    private BugReporter bugReporter;
     private int priority;
     private boolean isOpen;
 
 
-    public Bug(String description, String email, int priority, boolean isOpen) {
+    public BugReporter getBugReporter() {
+        return bugReporter;
+    }
+
+    public void setBugReporter(BugReporter bugReporter) {
+        this.bugReporter = bugReporter;
+    }
+
+    public Bug(String description, BugReporter bugReporter, int priority, boolean isOpen) {
         this.description = description;
-        this.email = email;
+        this.bugReporter = bugReporter;
         this.priority = priority;
         this.isOpen = isOpen;
     }
@@ -26,17 +34,6 @@ public class Bug {
         }
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        if (email.contains("@")) {
-            this.email = email;
-        } else {
-            System.out.println("brakuje @");
-        }
-    }
 
     public void setPriority(int priority) {
         if (priority > 0 && priority < 6) {
@@ -51,15 +48,26 @@ public class Bug {
     }
 
     public void setOpen(boolean open) {
+        notifyStatusChange();
         isOpen = open;
     }
 
+    @Override
+    public String toString() {
+        return "Bug{" +
+                "description='" + description + '\'' +
+                ", bugReporter=" + bugReporter +
+                ", priority=" + priority +
+                ", isOpen=" + isOpen +
+                '}';
+    }
+
     public void showBug() {
-        System.out.println("model.Bug: " + this.description + " who: " + this.email + this.priority + this.isOpen);
+        System.out.println("model.Bug: " + this.description + " who: " + this.bugReporter + this.priority + this.isOpen);
     }
 
     public void showReporter() {
-        System.out.println(" who: " + this.email);
+        System.out.println(" who: " + this.bugReporter);
     }
 
     public void showStatus() {
@@ -70,4 +78,38 @@ public class Bug {
         return this.priority;
     }
 
+    @Override
+    public void notifyStatusChange() {
+        System.out.println("Status changed");
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Bug)) return false;
+
+        Bug bug = (Bug) o;
+
+        if (getPriority() != bug.getPriority()) return false;
+        if (isOpen() != bug.isOpen()) return false;
+        if (getDescription() != null ? !getDescription().equals(bug.getDescription()) : bug.getDescription() != null)
+            return false;
+        return getBugReporter() != null ? getBugReporter().equals(bug.getBugReporter()) : bug.getBugReporter() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getDescription() != null ? getDescription().hashCode() : 0;
+        result = 31 * result + (getBugReporter() != null ? getBugReporter().hashCode() : 0);
+        result = 31 * result + getPriority();
+        result = 31 * result + (isOpen() ? 1 : 0);
+        return result;
+    }
+
+    @Override
+    public int compareTo(Bug bug) {
+        return this.getDescription().compareTo(bug.getDescription());
+
+    }
 }
