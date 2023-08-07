@@ -2,6 +2,7 @@ import model.Bug;
 import model.BugReporter;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public class Main {
     public static void main(String[] args) {
@@ -43,24 +44,49 @@ public class Main {
 //
         List<Bug> bugs = new ArrayList<Bug>();
         bugs.add(new Bug("opisik5", new BugReporter("Ar5", "Ku", "arek5@test.pl"),4,true));
-        bugs.add(new Bug("opisik4", new BugReporter("Ar4", "Ku", "arek4@test.pl"),4,true));
-        bugs.add(new Bug("opisik2", new BugReporter("Ar2", "Ku", "arek2@test.pl"),4,true));
-        bugs.add(new Bug("opisik2", new BugReporter("Ar2", "Ku", "arek2@test.pl"),4,true));
-        bugs.add(new Bug("opisik1", new BugReporter("Ar1", "Ku1", "arek1@test.pl"),4,true));
-        bugs.add(new Bug("opisik3", new BugReporter("Ar", "Ku3", "arek3@test.pl"),4,true));
+        bugs.add(new Bug("opisik4", new BugReporter("Ar4", "Ku", "arek4@test.pl"),2,true));
+        bugs.add(new Bug("opisik2", new BugReporter("Ar2", "Ku", "arek2@test.pl"),5,true));
+        bugs.add(new Bug("opisik2", new BugReporter("Ar2", "Ku", "arek2@test.pl"),6,true));
+        bugs.add(new Bug("opisik9", new BugReporter("Ar9", "Ku9", "arek9@test.pl"),8,true));
+        bugs.add(new Bug("opisik3", new BugReporter("Ar", "Ku3", "arek3@test.pl"),9,true));
+        bugs.add(new Bug("opisik2", new BugReporter("dubAr2", "dubKu", "dubarek2@test.pl"),6,true));
 
 
-        Collections.sort(bugs);
+//        Collections.sort(bugs);
+//
+//        for (Bug bug : bugs){
+//            System.out.println(bug);
+//        }
+//
+//        Set<Bug> uniBugs  = new HashSet<Bug>(bugs);
+//
+//        for (Bug bug : uniBugs){
+//            System.out.println(bug);
+//        }
 
-        for (Bug bug : bugs){
-            System.out.println(bug);
-        }
+        long count = bugs.stream()
+                .filter(prio -> prio.getPriority() > 5)
+                .count();
+        System.out.println(count);
 
-        Set<Bug> uniBugs  = new HashSet<Bug>(bugs);
 
-        for (Bug bug : uniBugs){
-            System.out.println(bug);
-        }
+        bugs.stream()
+                .max(Bug::compareTo)
+                .ifPresent(bug -> System.out.println(bug));
+
+        bugs.stream()
+                .map(Bug::getDescription)
+                .distinct()
+                .forEach(b -> System.out.println(b));
+
+        boolean b = bugs.stream()
+                .allMatch(prio -> prio.getPriority() > 5);
+
+        System.out.println(b);
+
+        bugs.stream()
+                .sorted(Comparator.comparing(Bug::getDescription).thenComparing(Bug::getPriority))
+                .forEach(bi-> System.out.println(bi));
 
     }
 
